@@ -70,6 +70,16 @@ router.post("/folders", function (req, res) {
   );
 });
 
+router.put("/folders/:folderId/folderName", function (req, res) {
+  connection.query(
+    `UPDATE folders SET folder_name = '${req.body.folder_name}' WHERE folder_id = '${req.params.folderId}';`,
+    (error, results, fields) => {
+      if (error) throw error;
+      res.status(200).send("folder name updated");
+    }
+  );
+})
+
 //UPDATE NOTE TITLE
 router.put("/folders/:folderId/:noteId", function (req, res) {
   connection.query(
