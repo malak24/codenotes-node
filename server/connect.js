@@ -1,8 +1,6 @@
-const { response } = require("express");
 const express = require("express");
 const router = express.Router();
 const mysql = require("mysql");
-
 
 //-----------CONNECTION TO AWS --------------
 const db_host = process.env.DB_HOST ? process.env.DB_HOST : "localhost";
@@ -22,7 +20,6 @@ const connection = mysql.createConnection({
 connection.connect(function (error) {
   if (error) throw error;
 });
-
 
 //GET ALL DATA FROM NOTES TABLE (DATABASE)
 router.get("/data", function (req, res) {
@@ -78,7 +75,7 @@ router.put("/folders/:folderId/folderName", function (req, res) {
       res.status(200).send("folder name updated");
     }
   );
-})
+});
 
 //UPDATE NOTE TITLE
 router.put("/folders/:folderId/:noteId", function (req, res) {
@@ -94,14 +91,14 @@ router.put("/folders/:folderId/:noteId", function (req, res) {
 // UPDATE NOTE CONTENT OF A SPECIFIC NOTE
 router.put("/folders/:folderId/:noteId/note", function (req, res) {
   connection.query(
-    "UPDATE notes SET note_content = ? WHERE note_id = ?", [
-    req.body.note_content,
-    req.params.noteId
-  ], (error, results, fields) => {
-    if(error) throw error;
-    res.status(200).send("Note saved !");
-  });
-})
+    "UPDATE notes SET note_content = ? WHERE note_id = ?",
+    [req.body.note_content, req.params.noteId],
+    (error, results, fields) => {
+      if (error) throw error;
+      res.status(200).send("Note saved !");
+    }
+  );
+});
 
 // OPEN A SPECIFIC NOTE
 router.get("/notes/:noteId", function (req, res) {
@@ -159,21 +156,26 @@ router.put("/notes/:noteId", function (req, res) {
 });
 
 // SEARCH FOR A NOTE BY TITLE
-// router.post('/notes', function(req, res) {
-//   connection.query(`SELECT LOCATE('${req.body.search}', note_title) FROM notes;` , (error, results, fields) => {
-//     if (error) throw error;
-//     res.status(200).send(results)
-//   })
-// })
+router.get("/notes", function (req, res) {
+  connection.query(
+    `SELECT note_content FROM notes;`,
+    (error, results, fields) => {
+      if (error) throw error;
+      res.status(200).send(results);
+    }
+  );
+});
 
 // SEARCH FOR A NOTE BY NOTE CONTENT
-// router.post('/notes', function(req, res) {
-//   console.log(req.body)
-//   connection.query(`SELECT LOCATE('${req.body.search}', note_content) FROM notes;` , (error, results, fields) => {
-//     if (error) throw error;
-//     res.status(200).send(results)
-//   })
-// })
+router.post("/notes/:noteId", function (req, res) {
+  connection.query(
+    `SET note_content = ${note_content} WHERE note_id = ${req.params.noteId};`,
+    (error, results, fields) => {
+      if (error) throw error;
+      res.status(200).send(results);
+    }
+  );
+});
 
 // end the connection betweem nodeJs and db
 function endconnection() {
