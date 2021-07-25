@@ -155,7 +155,7 @@ router.put("/notes/:noteId", function (req, res) {
   );
 });
 
-// SEARCH FOR A NOTE BY TITLE
+
 router.get("/notes", function (req, res) {
   connection.query(
     `SELECT note_content FROM notes;`,
@@ -166,16 +166,6 @@ router.get("/notes", function (req, res) {
   );
 });
 
-// SEARCH FOR A NOTE BY NOTE CONTENT
-router.post("/notes/:noteId", function (req, res) {
-  connection.query(
-    `SET note_content = ${note_content} WHERE note_id = ${req.params.noteId};`,
-    (error, results, fields) => {
-      if (error) throw error;
-      res.status(200).send(results);
-    }
-  );
-});
 
 // end the connection betweem nodeJs and db
 function endconnection() {
